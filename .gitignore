@@ -1,0 +1,8 @@
+.env*
+
+*__pycache__*
+.scannerwork/
+.vscode/
+build/
+coverage/
+node_modules/

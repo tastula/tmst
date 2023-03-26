@@ -1,0 +1,2 @@
+PRIVATE_TOKEN=42a1c1d21e10d09a3dc33544bd31560dd87b27b34fcbe33dfdc821013e2bb890d1f0ba25d695aeb534fa34e9c165db63f7209498e447d582bfc3b1165a78475f
+PRISMA_DB_URL=postgresql://thesisuser:thesispass@database:5432/thesisdb?schema=user_data

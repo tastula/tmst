@@ -1,0 +1,114 @@
+openapi: 3.0.0
+basePath: '/api/v1/userData'
+info:
+  title: 'User data microservice API'
+  version: '1.0.0'
+servers:
+  - url: 'http://localhost:3000/api/v1/userData'
+    description: 'default Docker server'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: 'http'
+      scheme: 'bearer'
+      bearerFormat: 'jwt'
+  schemas:
+    UserDataOut:
+      type: 'object'
+      allOf:
+        - $ref: '#/components/schemas/UserDataIn'
+      properties:
+        dataKey:
+          description: 'a key to match the data'
+          type: 'string'
+        userId:
+          description: 'ID of the authorized user'
+          type: 'string'
+      required:
+        - dataKey
+        - userId
+    UserDataIn:
+      type: 'object'
+      properties:
+        data:
+          description: 'the actual JSON data'
+          type: 'string'
+        dataType:
+          description: 'a description of the data type'
+          type: 'string'
+      required:
+        - data
+        - dataType
+  parameters:
+    dataKey:
+      name: 'dataKey'
+      in: 'path'
+      description: 'key to search for data'
+      required: true
+      type: 'string'
+    userId:
+      name: 'userId'
+      in: 'token'
+      description: 'user read from JWT payload'
+      required: true
+      type: 'string'
+  responses:
+    401:
+      description: 'failed authentication (token missing)'
+    403:
+      description: 'failed authorization (token broken)'
+    404:
+      description: 'unexpected resource not found'
+    500:
+      description: 'unexpected internal server error (general error)'
+security:
+  - bearerAuth: []
+paths:
+  /{dataKey}:
+    get:
+      summary: 'get user data matching the key'
+      produces: 'application/json'
+      parameters:
+        - dataKey:
+          $ref: '#/components/parameters/dataKey'
+        - userId:
+          $ref: '#/components/parameters/userId'
+      responses:
+        200:
+          description: 'successful get'
+          schema:
+            $ref: '#/components/schemas/UserDataOut'
+        204:
+          description: 'successful get but no content'
+        allOf:
+          - $ref: '#/components/responses'
+    post:
+      summary: 'upload or update user data matching the key'
+      parameters:
+        - dataKey:
+          $ref: '#/components/parameters/dataKey'
+        - userId:
+          $ref: '#/components/parameters/userId'
+        - dataBody:
+          in: 'body'
+          description: 'user data and related metadata'
+          required: true
+          schema:
+            $ref: '#/components/schemas/UserDataIn'
+      responses:
+        201:
+          description: 'successful post'
+        allOf:
+          - $ref: '#/components/responses'
+    delete:
+      summary: 'delete user data matching the key'
+      parameters:
+        - dataKey:
+          $ref: '#/components/parameters/dataKey'
+        - userId:
+          $ref: '#/components/parameters/userId'
+      responses:
+        200:
+          description: 'successful deletion whether data existed or not'
+        allOf:
+          - $ref: '#/components/responses'

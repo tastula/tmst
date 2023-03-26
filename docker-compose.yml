@@ -1,0 +1,31 @@
+version: '3.6'
+
+services:
+  database:
+    container_name: thesis_database
+    image: postgres:15.1
+    restart: unless-stopped
+    ports:
+      - '5000:5432'
+    networks:
+      - thesis_net
+    env_file:
+      - ./.env.database
+
+  backend:
+    container_name: thesis_backend
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    restart: unless-stopped
+    networks:
+      - thesis_net
+    env_file:
+      - ./.env.backend
+    ports:
+      - '4000:4000'
+    depends_on:
+      - database
+
+networks:
+  thesis_net:
